@@ -18,10 +18,11 @@ export DOCKER_CONFIG
 trap 'rm -rf -- "$DOCKER_CONFIG"' EXIT
 docker login ghcr.io --username "$registry_user" --password-stdin
 
-# .env may hold the app's secrets too: keep it private to this user.
-umask 077
+# .env may hold the app's secrets too: keep it private to this user. The folders' default ACLs
+# override the umask, hence the explicit chmod.
 touch .env
 { grep -v '^IMAGE=' .env || true; printf 'IMAGE=%s\n' "$image"; } > .env.next
+chmod 600 .env.next
 mv .env.next .env
 
 docker compose -f compose.prod.yaml pull
