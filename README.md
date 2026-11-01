@@ -23,8 +23,7 @@ jobs:
 ```
 
 `main` is protected like every repository's: a change reaches all of them once merged, after
-actionlint and shellcheck. Keep inputs and outputs compatible; a breaking change gets a new
-workflow file, and callers move to it one by one.
+actionlint and shellcheck. A change to inputs or outputs updates every caller.
 
 ## How a repository releases
 
