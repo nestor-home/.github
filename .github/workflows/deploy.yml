@@ -1,0 +1,88 @@
+# Deploys an image to the server: copies the caller's compose file and deploy/deploy.sh into
+# $DEPLOY_ROOT/<app>, then runs deploy.sh, which pulls the image and starts it with Docker Compose.
+#
+# The environment (default: production) holds what the job needs, so that only an approved
+# deployment can reach the server:
+#   secrets   DEPLOY_SSH_KEY, DEPLOY_KNOWN_HOSTS
+#   variables DEPLOY_HOST, DEPLOY_PORT, DEPLOY_USER, DEPLOY_ROOT
+# The compose file reads the image from ${IMAGE}, which deploy.sh writes to the app's .env.
+name: Deploy
+
+on:
+  workflow_call:
+    inputs:
+      app:
+        description: Folder of the app on the server, e.g. nestor-web.
+        type: string
+        required: true
+      image:
+        description: Image reference to run, pinned by digest (ghcr.io/owner/name@sha256:...).
+        type: string
+        required: true
+      compose-file:
+        type: string
+        default: deploy/compose.prod.yaml
+      environment:
+        type: string
+        default: production
+      url:
+        type: string
+        default: ""
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ inputs.environment }}
+      url: ${{ inputs.url }}
+    concurrency:
+      group: deploy-${{ inputs.app }}
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: ${{ inputs.compose-file }}
+          sparse-checkout-cone-mode: false
+      - uses: actions/checkout@v7
+        with:
+          repository: nestor-home/.github
+          ref: v1
+          path: .nestor-github
+          sparse-checkout: deploy
+      - name: Configure SSH
+        env:
+          KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          test -n "$KEY" && test -n "$KNOWN_HOSTS"
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$KEY" > ~/.ssh/id_ed25519
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/id_ed25519 ~/.ssh/known_hosts
+      - name: Deploy
+        env:
+          APP: ${{ inputs.app }}
+          IMAGE: ${{ inputs.image }}
+          COMPOSE_FILE: ${{ inputs.compose-file }}
+          HOST: ${{ vars.DEPLOY_HOST }}
+          PORT: ${{ vars.DEPLOY_PORT }}
+          DEPLOY_USER: ${{ vars.DEPLOY_USER }}
+          ROOT: ${{ vars.DEPLOY_ROOT }}
+          TOKEN: ${{ github.token }}
+        run: |
+          test -n "$HOST" && test -n "$DEPLOY_USER" && test -n "$ROOT"
+          [[ "$APP" =~ ^[a-z0-9-]+$ ]]
+          [[ "$IMAGE" =~ ^ghcr\.io/[a-z0-9./_-]+@sha256:[0-9a-f]{64}$ ]]
+          target="$ROOT/$APP"
+          ssh_opts=(-p "${PORT:-22}" -o StrictHostKeyChecking=yes)
+          prepare="mkdir -p '$target'"
+          ssh "${ssh_opts[@]}" "$DEPLOY_USER@$HOST" "$prepare"
+          scp -P "${PORT:-22}" -o StrictHostKeyChecking=yes \
+            "$COMPOSE_FILE" "$DEPLOY_USER@$HOST:$target/compose.prod.yaml"
+          scp -P "${PORT:-22}" -o StrictHostKeyChecking=yes \
+            .nestor-github/deploy/deploy.sh "$DEPLOY_USER@$HOST:$target/deploy.sh"
+          run="bash '$target/deploy.sh' '$IMAGE' '$GITHUB_ACTOR'"
+          printf '%s\n' "$TOKEN" | ssh "${ssh_opts[@]}" "$DEPLOY_USER@$HOST" "$run"

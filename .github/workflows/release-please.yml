@@ -1,0 +1,36 @@
+# Opens and updates the release pull request from Conventional Commits, and creates the tag and
+# the GitHub Release when that pull request is merged. Callers publish in the same workflow run:
+# a release created with GITHUB_TOKEN does not trigger other workflows.
+#
+# The caller repository holds release-please-config.json and .release-please-manifest.json.
+name: Release Please
+
+on:
+  workflow_call:
+    outputs:
+      release_created:
+        description: "'true' when this run created a release."
+        value: ${{ jobs.release-please.outputs.release_created }}
+      tag_name:
+        description: The tag of the release, e.g. v0.2.0.
+        value: ${{ jobs.release-please.outputs.tag_name }}
+      version:
+        description: The version of the release, e.g. 0.2.0.
+        value: ${{ jobs.release-please.outputs.version }}
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+      version: ${{ steps.release.outputs.version }}
+    steps:
+      - id: release
+        uses: googleapis/release-please-action@v5
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
