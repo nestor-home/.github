@@ -13,16 +13,17 @@ What every repository of the [nestor-home](https://github.com/nestor-home) organ
 | `deploy/deploy.sh` | What `deploy.yml` runs on the server. |
 | `settings/` | Repository settings and rulesets, applied with `settings/configure.sh`. |
 
-Repositories call the workflows at the `v1` tag:
+Repositories call the workflows on `main`:
 
 ```yaml
 jobs:
   release:
-    uses: nestor-home/.github/.github/workflows/release-please.yml@v1
+    uses: nestor-home/.github/.github/workflows/release-please.yml@main
 ```
 
-`v1` moves with compatible changes; a breaking change to an input or an output gets `v2`.
-After merging a change here: `git tag -f v1 && git push -f origin v1`.
+`main` is protected like every repository's: a change reaches all of them once merged, after
+actionlint and shellcheck. Keep inputs and outputs compatible; a breaking change gets a new
+workflow file, and callers move to it one by one.
 
 ## How a repository releases
 
