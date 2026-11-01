@@ -1,6 +1,9 @@
 # Opens and updates the release pull request from Conventional Commits, and creates the tag and
-# the GitHub Release when that pull request is merged. Callers publish in the same workflow run:
-# a release created with GITHUB_TOKEN does not trigger other workflows.
+# the GitHub Release when that pull request is merged. Callers publish in the same workflow run.
+#
+# release-please acts as the organization's GitHub App (variable RELEASE_APP_ID, secret
+# RELEASE_APP_PRIVATE_KEY, so callers pass `secrets: inherit`): unlike GITHUB_TOKEN, its release
+# pull requests run CI and its tags trigger workflows.
 #
 # The caller repository holds release-please-config.json and .release-please-manifest.json.
 name: Release Please
@@ -29,8 +32,16 @@ jobs:
       tag_name: ${{ steps.release.outputs.tag_name }}
       version: ${{ steps.release.outputs.version }}
     steps:
+      - id: app
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
       - id: release
         uses: googleapis/release-please-action@v5
         with:
+          token: ${{ steps.app.outputs.token }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json

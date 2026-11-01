@@ -19,6 +19,7 @@ Repositories call the workflows on `main`:
 jobs:
   release:
     uses: nestor-home/.github/.github/workflows/release-please.yml@main
+    secrets: inherit
 ```
 
 `main` is protected like every repository's: a change reaches all of them once merged, after
@@ -32,6 +33,10 @@ workflow file, and callers move to it one by one.
    changelog. Merging it creates the `vX.Y.Z` tag and the GitHub Release.
 3. In the same run, the repository's `release.yml` publishes: PyPI, npm or crates.io through
    trusted publishing (no stored token), images on GHCR, and the site on the server.
+
+release-please acts as the organization's GitHub App `nestor-home-release` (variable
+`RELEASE_APP_ID`, secret `RELEASE_APP_PRIVATE_KEY`): its release pull requests run CI like any other,
+and its tags trigger workflows. Callers pass `secrets: inherit`.
 
 A repository's `release.yml` keeps its publish job itself: registries trust a workflow file of the
 repository that publishes, not a reusable workflow.
