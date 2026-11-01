@@ -14,4 +14,4 @@ memory, delegation of long tasks, initiative, and any body you give it, from a s
 | [nestor-reachy](https://github.com/nestor-home/nestor-reachy) | Reachy Mini as a satellite: `pip install nestor-reachy` |
 | [nestor-web](https://github.com/nestor-home/nestor-web) | the website |
 
-Satellites speak the `nestor.satellite/2` protocol. Every SDK passes the server's conformance suite.
+Satellites speak the `nestor.satellite/1` protocol. Every SDK passes the server's conformance suite.
