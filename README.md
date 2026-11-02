@@ -6,6 +6,8 @@ What every repository of the [nestor-home](https://github.com/nestor-home) organ
 |---|---|
 | `profile/README.md` | The organization's public page. |
 | `CONTRIBUTING.md`, `SECURITY.md`, `PULL_REQUEST_TEMPLATE.md` | Defaults for every repository that has none. |
+| `ISSUE_TEMPLATE/config.yml` | Default issue chooser: sends questions and ideas to Discussions. |
+| `.github/DISCUSSION_TEMPLATE/` | Forms for the organization's Discussions, which live in this repository. |
 | `.github/workflows/release-please.yml` | Release pull request, tag and GitHub Release from Conventional Commits. |
 | `.github/workflows/pr-title.yml` | Checks that a pull request title is a Conventional Commit. |
 | `.github/workflows/container.yml` | Multi-platform image (amd64, arm64) pushed to GHCR, with provenance. |

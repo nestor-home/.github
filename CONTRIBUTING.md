@@ -21,4 +21,5 @@ Before 1.0, `feat` and breaking changes raise the minor version, everything else
 
 ## Reporting
 
-Bugs and ideas: the repository's issues. Vulnerabilities: see [SECURITY.md](SECURITY.md).
+Questions, ideas and feedback: [Discussions](https://github.com/orgs/nestor-home/discussions).
+Reproducible bugs: the repository's issues. Vulnerabilities: see [SECURITY.md](SECURITY.md).

@@ -1,0 +1,39 @@
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: What you are trying to do, what you tried, and what happened instead.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Nestor version
+      description: The `nestor-home` package version, or the image tag.
+      placeholder: "0.4.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: Installed with
+      options:
+        - uv
+        - pip
+        - Docker
+        - From source
+    validations:
+      required: true
+  - type: input
+    id: providers
+    attributes:
+      label: Providers
+      description: Model, voice and channels you use, if relevant.
+      placeholder: "OpenRouter, ElevenLabs, Telegram"
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or configuration
+      description: Remove keys and tokens first.
+      render: text
