@@ -56,5 +56,5 @@ jobs:
       - if: inputs.automerge && steps.release.outputs.pr
         env:
           GH_TOKEN: ${{ steps.app.outputs.token }}
-          PR: ${{ fromJSON(steps.release.outputs.pr).number }}
-        run: gh pr merge "$PR" --repo "$GITHUB_REPOSITORY" --squash --auto
+          PR: ${{ steps.release.outputs.pr }}  # the release pull request, as JSON
+        run: gh pr merge "$(jq -r .number <<< "$PR")" --repo "$GITHUB_REPOSITORY" --squash --auto
