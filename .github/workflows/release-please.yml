@@ -5,11 +5,18 @@
 # RELEASE_APP_PRIVATE_KEY, so callers pass `secrets: inherit`): unlike GITHUB_TOKEN, its release
 # pull requests run CI and its tags trigger workflows.
 #
-# The caller repository holds release-please-config.json and .release-please-manifest.json.
+# The caller repository holds release-please-config.json and .release-please-manifest.json. With
+# `automerge`, the release pull request is merged by GitHub as soon as its CI passes: what the
+# repository publishes follows its dependencies without anyone merging it.
 name: Release Please
 
 on:
   workflow_call:
+    inputs:
+      automerge:
+        description: Merge the release pull request once its CI passes.
+        type: boolean
+        default: false
     outputs:
       release_created:
         description: "'true' when this run created a release."
@@ -39,9 +46,15 @@ jobs:
           private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
           permission-contents: write
           permission-pull-requests: write
+          permission-issues: write  # release-please labels and comments its pull requests through the issues API
       - id: release
         uses: googleapis/release-please-action@v5
         with:
           token: ${{ steps.app.outputs.token }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+      - if: inputs.automerge && steps.release.outputs.pr
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          PR: ${{ fromJSON(steps.release.outputs.pr).number }}
+        run: gh pr merge "$PR" --repo "$GITHUB_REPOSITORY" --squash --auto
