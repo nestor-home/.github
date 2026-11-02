@@ -46,6 +46,7 @@ jobs:
           private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
           permission-contents: write
           permission-pull-requests: write
+          permission-issues: write  # release-please labels and comments its pull requests through the issues API
       - id: release
         uses: googleapis/release-please-action@v5
         with:
