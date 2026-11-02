@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Question
+    url: https://github.com/orgs/nestor-home/discussions/categories/q-a
+    about: Installing, configuring, troubleshooting. Issues are for reproducible bugs.
+  - name: Idea
+    url: https://github.com/orgs/nestor-home/discussions/categories/ideas
+    about: Features and feedback, discussed and upvoted first.
+  - name: Vulnerability
+    url: https://github.com/nestor-home/.github/blob/main/SECURITY.md
+    about: Report it privately, never in a public issue.

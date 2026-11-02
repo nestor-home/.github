@@ -1,0 +1,16 @@
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: What you need
+      description: The situation at home, not the solution yet.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Idea
+      description: How Nestor could help. Other tools that already do it are welcome.
+  - type: markdown
+    attributes:
+      value: Upvote the ideas you want too; it helps choose what comes next.

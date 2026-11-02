@@ -1,0 +1,31 @@
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: The device or driver you are building, and where you are stuck.
+    validations:
+      required: true
+  - type: dropdown
+    id: sdk
+    attributes:
+      label: SDK
+      options:
+        - Python
+        - TypeScript
+        - Rust
+        - None, my own client
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: SDK and server versions.
+      placeholder: "nestor-satellite 0.3.0, nestor-home 0.4.0"
+  - type: textarea
+    id: conformance
+    attributes:
+      label: Conformance output
+      description: "`nestor satellites conformance` output, if you ran it."
+      render: text

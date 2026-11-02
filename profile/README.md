@@ -3,7 +3,7 @@
 An open-source framework for home assistants: a fast voice agent wired to Home Assistant, with
 memory, delegation of long tasks, initiative, and any body you give it, from a speaker to a robot.
 
-[nestorhome.dev](https://nestorhome.dev)
+[nestorhome.dev](https://nestorhome.dev) · [Discussions](https://github.com/orgs/nestor-home/discussions)
 
 | Repository | Package |
 |---|---|
