@@ -31,11 +31,13 @@ workflow file, and callers move to it one by one.
 
 ## How dependencies follow
 
-Renovate (the GitHub App, installed on the organization) watches the Nestor packages each repository
-depends on: `nestor-home`, `nestor-satellite` and `@nestor-home/*`, including the server version in
-`.nestor-version` and in the site's `scripts/server.mjs`. A new release opens a pull request, which
-GitHub merges as soon as CI passes; one that breaks a repository stays open with its failing CI.
-Other dependencies are not followed. Each repository's `renovate.json`:
+Renovate (the GitHub App, installed on the organization) runs with its recommended configuration:
+the preset `default.json`, which each repository's `renovate.json` extends. Minor and patch updates,
+and every release of Nestor's own packages, are merged by GitHub once CI passes; major updates wait
+for a person, listed in each repository's dependency dashboard issue. Commits follow Renovate's
+convention: `fix(deps)` for runtime dependencies, which release-please releases, and `chore(deps)`
+for the rest. Two regex managers add the server pins Renovate cannot read on its own:
+`.nestor-version` (tests) and the site's `NESTOR_SERVER` (served schemas, hence a release).
 
 ```json
 { "$schema": "https://docs.renovatebot.com/renovate-schema.json", "extends": ["github>nestor-home/.github"] }
