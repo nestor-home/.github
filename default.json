@@ -1,0 +1,43 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Every nestor-home repository keeps the Nestor packages it depends on current, merged as soon as its CI passes. Other dependencies are left to people.",
+  "extends": ["config:recommended"],
+  "dependencyDashboard": false,
+  "semanticCommits": "enabled",
+  "semanticCommitType": "build",
+  "prHourlyLimit": 0,
+  "prConcurrentLimit": 0,
+  "packageRules": [
+    {
+      "description": "Only Nestor's own packages are followed.",
+      "matchPackageNames": ["*"],
+      "enabled": false
+    },
+    {
+      "description": "Nestor's packages: the range moves with each release, and GitHub merges the pull request once CI passes.",
+      "matchPackageNames": ["nestor-home", "nestor-satellite", "@nestor-home/**"],
+      "enabled": true,
+      "rangeStrategy": "replace",
+      "automerge": true,
+      "platformAutomerge": true
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "The server release a satellite SDK or template runs the conformance suite with.",
+      "managerFilePatterns": ["/(^|/)\\.nestor-version$/"],
+      "matchStrings": ["^(?<currentValue>\\S+)\\s*$"],
+      "depNameTemplate": "nestor-home",
+      "datasourceTemplate": "pypi"
+    },
+    {
+      "customType": "regex",
+      "description": "The server release the site serves its schemas and OAuth relay from.",
+      "managerFilePatterns": ["/^scripts/server\\.mjs$/"],
+      "matchStrings": ["NESTOR_SERVER = \"(?<currentValue>[^\"]+)\""],
+      "depNameTemplate": "nestor-home",
+      "datasourceTemplate": "pypi"
+    }
+  ]
+}

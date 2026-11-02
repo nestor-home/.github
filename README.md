@@ -14,6 +14,7 @@ What every repository of the [nestor-home](https://github.com/nestor-home) organ
 | `.github/workflows/deploy.yml` | Deploys an image to the server, behind an approved environment. |
 | `deploy/deploy.sh` | What `deploy.yml` runs on the server. |
 | `settings/` | Repository settings and rulesets, applied with `settings/configure.sh`. |
+| `default.json` | Renovate preset: each repository's `renovate.json` extends `github>nestor-home/.github`. |
 
 Repositories call the workflows on `main`:
 
@@ -27,6 +28,22 @@ jobs:
 `main` is protected like every repository's: a change reaches all of them once merged, after
 actionlint and shellcheck. Keep inputs and outputs compatible; a breaking change gets a new
 workflow file, and callers move to it one by one.
+
+## How dependencies follow
+
+Renovate (the GitHub App, installed on the organization) watches the Nestor packages each repository
+depends on: `nestor-home`, `nestor-satellite` and `@nestor-home/*`, including the server version in
+`.nestor-version` and in the site's `scripts/server.mjs`. A new release opens a pull request, which
+GitHub merges as soon as CI passes; one that breaks a repository stays open with its failing CI.
+Other dependencies are not followed. Each repository's `renovate.json`:
+
+```json
+{ "$schema": "https://docs.renovatebot.com/renovate-schema.json", "extends": ["github>nestor-home/.github"] }
+```
+
+A repository whose releases should follow on their own calls `release-please.yml` with
+`automerge: true`: its release pull request is merged once CI passes, which publishes it. The server
+(`nestor`) and the site keep theirs merged by a person.
 
 ## How a repository releases
 
