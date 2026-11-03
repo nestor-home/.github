@@ -3,9 +3,10 @@
   "extends": ["config:recommended", ":automergeMinor"],
   "packageRules": [
     {
-      "description": "Nestor's own packages follow each release, 0.x included.",
+      "description": "Nestor's own packages follow each release, 0.x included, ahead of the hourly PR limit.",
       "matchPackageNames": ["nestor-home", "nestor-satellite", "@nestor-home/**"],
-      "automerge": true
+      "automerge": true,
+      "prPriority": 10
     }
   ],
   "customManagers": [
