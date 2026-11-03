@@ -33,7 +33,8 @@ workflow file, and callers move to it one by one.
 
 Renovate (the GitHub App, installed on the organization) runs with its recommended configuration:
 the preset `default.json`, which each repository's `renovate.json` extends. Minor and patch updates,
-and every release of Nestor's own packages, are merged by GitHub once CI passes; major updates wait
+and every release of Nestor's own packages, are merged by GitHub once CI passes. Nestor's packages
+come first: Renovate opens two PRs an hour, by priority. Major updates wait
 for a person, listed in each repository's dependency dashboard issue. Commits follow Renovate's
 convention: `fix(deps)` for runtime dependencies, which release-please releases, and `chore(deps)`
 for the rest. Two regex managers add the server pins Renovate cannot read on its own:
