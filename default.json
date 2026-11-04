@@ -3,6 +3,12 @@
   "extends": ["config:recommended", ":automergeMinor"],
   "packageRules": [
     {
+      "description": "npm releases wait a day, as pnpm's minimum release age does (pnpm 12 default): a fresher one would fail `pnpm install`. Nestor's own packages are exempt on both sides.",
+      "matchDatasources": ["npm"],
+      "matchPackageNames": ["!@nestor-home/**"],
+      "minimumReleaseAge": "1 day"
+    },
+    {
       "description": "Nestor's own packages follow each release, 0.x included, ahead of the hourly PR limit.",
       "matchPackageNames": ["nestor-home", "nestor-satellite", "@nestor-home/**"],
       "automerge": true,
