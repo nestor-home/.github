@@ -31,6 +31,7 @@ on:
 
 jobs:
   deploy:
+    timeout-minutes: 5
     runs-on: ubuntu-latest
     environment:
       name: ${{ inputs.environment }}

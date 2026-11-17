@@ -30,6 +30,7 @@ on:
 
 jobs:
   release-please:
+    timeout-minutes: 3
     runs-on: ubuntu-latest
     permissions:
       contents: write

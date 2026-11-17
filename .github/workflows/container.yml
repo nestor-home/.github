@@ -43,6 +43,7 @@ on:
 
 jobs:
   build:
+    timeout-minutes: 15
     strategy:
       matrix:
         include:
@@ -102,6 +103,7 @@ jobs:
           retention-days: 1
 
   merge:
+    timeout-minutes: 3
     needs: build
     runs-on: ubuntu-latest
     permissions:
