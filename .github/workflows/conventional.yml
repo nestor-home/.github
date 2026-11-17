@@ -9,5 +9,4 @@ permissions:
 
 jobs:
   conventional:
-    timeout-minutes: 2
     uses: ./.github/workflows/pr-title.yml
