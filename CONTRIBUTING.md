@@ -13,6 +13,17 @@ its checks; this page holds what all repositories share.
 - One pull request is one coherent change, with its tests and documentation.
 - Tests check real behaviour, never a copy of the implementation or of another repository.
 
+## Checks
+
+- Before pushing, a [lefthook](https://github.com/evilmartians/lefthook) `pre-push` hook formats, lints and
+  typechecks what you push, in a few seconds. Each repository's README says how to install it once.
+- CI is honest: no retry, no skipped test, no limit widened to get green. A check that fails now and then has a
+  bug; find it and fix it where it comes from.
+- Tests run in random order (`pytest-randomly`, Vitest's shuffled files): a test leaves nothing behind for the next.
+- Every job has a time limit (`timeout-minutes`) of about twice its usual duration: a job that slows down fails
+  rather than silently costing everyone's time.
+- A new commit on a pull request cancels its earlier run.
+
 ## Releases
 
 Nobody tags by hand. release-please keeps a release pull request open on each repository, with the
