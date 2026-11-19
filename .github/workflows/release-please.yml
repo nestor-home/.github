@@ -8,6 +8,10 @@
 # The caller repository holds release-please-config.json and .release-please-manifest.json. With
 # `automerge`, the release pull request is merged by GitHub as soon as its CI passes: what the
 # repository publishes follows its dependencies without anyone merging it.
+#
+# Once a release is created, every earlier release of the repository is marked superseded at the
+# top of its notes, with a link to the latest one. The registries are not touched: yanking needs
+# credentials that trusted publishing does not give (crates.io, npm) or has no API at all (PyPI).
 name: Release Please
 
 on:
@@ -59,3 +63,16 @@ jobs:
           GH_TOKEN: ${{ steps.app.outputs.token }}
           PR: ${{ steps.release.outputs.pr }}  # the release pull request, as JSON
         run: gh pr merge "$(jq -r .number <<< "$PR")" --repo "$GITHUB_REPOSITORY" --squash --auto
+      - if: steps.release.outputs.release_created
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          TAG: ${{ steps.release.outputs.tag_name }}
+        run: |
+          marker='**Superseded.**'
+          note="> $marker This release is no longer supported. Use the [latest release](https://github.com/$GITHUB_REPOSITORY/releases/latest)."
+          gh api --paginate "repos/$GITHUB_REPOSITORY/releases" \
+            --jq ".[] | select(.tag_name != \"$TAG\" and .draft == false and (.body // \"\" | contains(\"$marker\") | not)) | .id" |
+          while read -r id; do
+            body=$(gh api "repos/$GITHUB_REPOSITORY/releases/$id" --jq '.body // ""')
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/releases/$id" -f body="$note"$'\n\n'"$body" --jq .tag_name
+          done
