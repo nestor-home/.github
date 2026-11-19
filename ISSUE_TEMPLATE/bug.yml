@@ -1,0 +1,56 @@
+name: Bug
+description: Something does not work as the docs say. One bug per issue, reproducible.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time. A question or an idea goes to [Discussions](https://github.com/orgs/nestor-home/discussions); a vulnerability, privately (see SECURITY.md).
+        Never paste a key, a token or a password: check what you copy from `.env`, the configuration or the logs.
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: "`nestor --version`, or Settings › System in the admin. For a satellite, its software and version."
+      placeholder: nestor-home 0.16.1
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: Installed with
+      options:
+        - uv
+        - pip
+        - Docker
+        - from source
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: What you did
+      description: The steps, from a known state, that make it happen.
+      placeholder: |
+        1. Asked in the admin's chat: "remind me at 6 pm to call the plumber"
+        2. Waited until 6 pm
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected, and what happened
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs and journal
+      description: The server's log around the moment (`nestor run --verbose` gives more), and the events of the journal in the admin if they help. Remove anything private.
+      render: text
+  - type: textarea
+    id: config
+    attributes:
+      label: Configuration
+      description: The sections of `nestor.yaml` involved, with keys and tokens removed.
+      render: yaml
